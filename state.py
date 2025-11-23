@@ -2,7 +2,7 @@ from typing import TypedDict, Optional, List
 
 class AdvisorState(TypedDict):
     ticker: Optional[str]
-    price_data: Optional[str]
+    price_data: Optional[dict]
     news_data: Optional[List[str]]
     analyst_reasoning: Optional[str]
     final_report: Optional[str]
