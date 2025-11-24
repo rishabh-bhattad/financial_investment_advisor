@@ -1,5 +1,5 @@
 from state import AdvisorState
-from tools import fetch_news, fetch_price_data
+from tools import fetch_news, fetch_price_data, save_report_to_file
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 from dotenv import load_dotenv
@@ -44,4 +44,13 @@ def analyst_node(state: AdvisorState):
     })
 
     return {'analyst_reasoning': response.content}
+
+
+async def writer_node(state: AdvisorState):
+    ticker = state['ticker']
+    report_content = state['analyst_reasoning']
+
+    result = await save_report_to_file(ticker=ticker, report_content=report_content)
+    return {'final_report': result}
+
     

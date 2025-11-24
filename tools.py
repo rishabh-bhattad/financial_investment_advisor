@@ -34,3 +34,26 @@ async def fetch_news(ticker_symbol: str):
                 })
             news_text = search_result.content[0].text
             return news_text
+        
+
+async def save_report_to_file(ticker: str, report_content: str):
+    allowed_directory = "/Users/rishabhbhattad/Documents/Projects/Agents/financial_investment_advisor/reports/"
+
+    server_params = StdioServerParameters(
+        command="npx",
+        args=["-y", "@modelcontextprotocol/server-filesystem", allowed_directory],
+        env={**os.environ}
+    )
+
+    async with stdio_client(server=server_params) as (read, write):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
+            file_name = f"{ticker}_report.md"
+            await session.call_tool(
+                name="write_file",
+                arguments={
+                    "path": os.path.join(allowed_directory, file_name),
+                    "content": report_content
+                }
+            )
+            return f"{file_name} save to {allowed_directory}"
