@@ -1,7 +1,7 @@
 from state import AdvisorState
 from tools import fetch_news, fetch_price_data
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_core.prompts import ChatMessagePromptTemplate
+from langchain_core.prompts import ChatPromptTemplate
 from dotenv import load_dotenv
 import os
 
@@ -29,13 +29,15 @@ def analyst_node(state: AdvisorState):
     price_data = state['price_data']
     news_data = state['news_data']
     news_string = "\n".join(news_data)
-    template = ChatMessagePromptTemplate([
-        ("system", "You are a financial analyst. Analyze the provided technical data and news sentiment to determine a Buy/Sell/Hold rating."),
-        ("human", "Ticker: {ticker}\n\nFinancial Data: {prices}\n\nNews Summary: {news}")
-    ])
+    template = ChatPromptTemplate.from_messages(
+        [
+            ("system", "You are a financial analyst. Analyze the provided technical data and news sentiment to determine a Buy/Sell/Hold rating."),
+            ("human", "Ticker: {ticker}\n\nFinancial Data: {prices}\n\nNews Summary: {news}")
+        ]
+    )
 
     chain = template | llm
-    response = llm.invoke({
+    response = chain.invoke({
         "ticker": ticker,
         "prices": price_data,
         "news": news_string

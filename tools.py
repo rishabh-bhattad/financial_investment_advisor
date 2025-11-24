@@ -27,7 +27,7 @@ async def fetch_news(ticker_symbol: str):
         async with ClientSession(read, write) as session:
             await session.initialize()
             search_result = await session.call_tool(
-                name="brave_news_search",
+                name="brave_web_search",
                 arguments={
                     "query": f"{ticker_symbol} stock news",
                     "count": 5
